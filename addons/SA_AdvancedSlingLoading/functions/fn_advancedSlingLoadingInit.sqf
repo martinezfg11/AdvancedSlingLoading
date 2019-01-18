@@ -815,7 +815,7 @@ ASL_Can_Attach_Ropes = {
 	if(!isNull _vehicle && !isNull _cargo) then {
 		[_vehicle,_cargo] call ASL_Is_Supported_Cargo && vehicle player == player && player distance _cargo < 10 && _vehicle != _cargo;
 	} else {
-		false;
+		true;
 	};
 };
 
