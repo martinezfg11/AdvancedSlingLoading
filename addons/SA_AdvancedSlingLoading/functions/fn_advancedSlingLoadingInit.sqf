@@ -773,8 +773,10 @@ ASL_Attach_Ropes = {
 };
 
 ASL_Attach_Ropes_Action = {
-	private ["_vehicle","_cargo","_canBeAttached"];
-	_cargo = cursorTarget;
+	private ["_vehicle","_cargo","_canBeAttached","_position"];
+	_position = position player;
+	_cargo = player nearSupplies 20 select 1;
+	// _cargo = cursorTarget;
 	_vehicle = (player getVariable ["ASL_Ropes_Vehicle", [objNull,0]]) select 0;
 	if([_vehicle,_cargo] call ASL_Can_Attach_Ropes) then {
 		
@@ -804,18 +806,20 @@ ASL_Attach_Ropes_Action = {
 };
 
 ASL_Attach_Ropes_Action_Check = {
-	private ["_vehicleWithIndex","_cargo"];
+	private ["_vehicleWithIndex","_position"];
 	_vehicleWithIndex = player getVariable ["ASL_Ropes_Vehicle", [objNull,0]];
-	_cargo = cursorTarget;
+	_position = position player;
+	// _cargo = cursorTarget;
+	_cargo = player nearSupplies 20 select 1;
 	[_vehicleWithIndex select 0,_cargo] call ASL_Can_Attach_Ropes;
 };
 
 ASL_Can_Attach_Ropes = {
 	params ["_vehicle","_cargo"];
 	if(!isNull _vehicle && !isNull _cargo) then {
-		[_vehicle,_cargo] call ASL_Is_Supported_Cargo && vehicle player == player && player distance _cargo < 10 && _vehicle != _cargo;
+		[_vehicle,_cargo] call ASL_Is_Supported_Cargo && player distance _cargo < 20 && _vehicle != _cargo;
 	} else {
-		true;
+		false;
 	};
 };
 
@@ -906,7 +910,7 @@ ASL_Pickup_Ropes = {
 		_helper = "Land_Can_V2_F" createVehicle position _player;
 		{
 			[_helper, [0, 0, 0], [0,0,-1]] ropeAttachTo _x;
-			_helper attachTo [_player, [-0.1, 0.1, 0.15], "Pelvis"];
+			// _helper attachTo [_player, [-0.1, 0.1, 0.15], "Pelvis"];
 		} forEach _existingRopes;
 		hideObject _helper;
 		[[_helper],"ASL_Hide_Object_Global"] call ASL_RemoteExecServer;
@@ -942,7 +946,7 @@ ASL_Pickup_Ropes_Action_Check = {
 };
 
 ASL_Can_Pickup_Ropes = {
-	count (player getVariable ["ASL_Ropes_Vehicle", []]) == 0 && count (missionNamespace getVariable ["ASL_Nearby_Vehicles",[]]) > 0 && vehicle player == player;
+	count (player getVariable ["ASL_Ropes_Vehicle", []]) == 0 && count (missionNamespace getVariable ["ASL_Nearby_Vehicles",[]]) > 0;
 };
 
 ASL_SUPPORTED_VEHICLES = [
@@ -1170,3 +1174,4 @@ diag_log "Advanced Sling Loading Loaded";
 if(isServer) then {
 	[] call ASL_Advanced_Sling_Loading_Install;
 };
+
